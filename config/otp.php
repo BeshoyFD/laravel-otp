@@ -33,6 +33,13 @@ return [
     'expires' => 15, // in minutes.
 
     /*
+     * The expiry time of the otp token in cookie, to request otp again
+     */
+
+    'token_expire' => 129600, // in minutes. , 90 day
+
+    
+    /*
      * The default notification channels of the
      * token notification.
      *
