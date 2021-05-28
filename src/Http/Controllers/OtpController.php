@@ -7,6 +7,7 @@
 
 namespace Erdemkeren\Otp\Http\Controllers;
 
+use Erdemkeren\Otp\Events\OtpValidateEvent;
 use Erdemkeren\Otp\OtpFacade as Otp;
 use Erdemkeren\Otp\TokenInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -63,6 +64,8 @@ class OtpController
                 trans('The otp is not valid.')
             );
 
+            event(new OtpValidateEvent($request,$request->user(),"fail"));
+
             return redirect()->back()->withErrors($validator);
         }
 
@@ -72,10 +75,14 @@ class OtpController
                 trans('The otp is expired.')
             );
 
+            event(new OtpValidateEvent($request,$request->user(),"fail"));
+
             return redirect()->back()->withErrors($validator);
         }
 
         session()->forget('otp_requested');
+
+        event(new OtpValidateEvent($request,$request->user(),"success"));
 
         return redirect()
             ->to(session()->pull('otp_redirect_url'))
