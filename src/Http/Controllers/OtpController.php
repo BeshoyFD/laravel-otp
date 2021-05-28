@@ -56,10 +56,10 @@ class OtpController
 
         if (! $token = $this->retrieveOtpTokenByPlainText(
             $request->user(),
-            $request->input('password')
+            $request->input('otp')
         )) {
             $validator->getMessageBag()->add(
-                'password',
+                'otp',
                 trans('The otp is not valid.')
             );
 
@@ -94,7 +94,7 @@ class OtpController
     private function getOtpSubmissionRequestValidator(Request $request): ValidatorInterface
     {
         return ValidatorFacade::make($request->all(), [
-            'password' => 'required|string',
+            'otp' => 'required|string',
         ]);
     }
 
