@@ -31,7 +31,6 @@ class OtpController
         if (! $this->otpHasBeenRequested()) {
             return redirect('/');
         }
-
         return view('otp.create');
     }
 
@@ -61,7 +60,7 @@ class OtpController
         )) {
             $validator->getMessageBag()->add(
                 'password',
-                'The password is not valid.'
+                trans('The otp is not valid.')
             );
 
             return redirect()->back()->withErrors($validator);
@@ -70,7 +69,7 @@ class OtpController
         if ($token->expired()) {
             $validator->getMessageBag()->add(
                 'password',
-                'The password is expired.'
+                trans('The otp is expired.')
             );
 
             return redirect()->back()->withErrors($validator);
@@ -81,7 +80,7 @@ class OtpController
         return redirect()
             ->to(session()->pull('otp_redirect_url'))
             ->withCookie(
-                cookie()->make('otp_token', (string) $token, $token->expiryTime() / 60)
+                cookie()->make('otp_token', (string) $token, config('otp.token_expire'))
             );
     }
 
