@@ -260,6 +260,19 @@ class Token implements TokenInterface
         );
     }
 
+
+    public static function hasNotActiveGeneratedPassword($authenticable_id)
+    {
+        $query = DB::table(self::getTable());
+
+        $query->where('authenticable_id' , $authenticable_id)->whereRaw('TIMESTAMPDIFF(MINUTE, created_at, NOW()) < 15');
+
+       if($query->first())
+           return false;
+
+       return true;
+    }
+
     /**
      * Convert the token to a token notification.
      *
@@ -267,6 +280,11 @@ class Token implements TokenInterface
      */
     public function toNotification(): Notification
     {
+        if(config("otp.notification") && is_callable(config("otp.notification"))){
+            $callCustomNotificationClass = config("otp.notification");
+            return $callCustomNotificationClass($this);
+        }
+
         return new TokenNotification($this);
     }
 
