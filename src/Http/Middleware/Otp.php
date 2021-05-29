@@ -45,7 +45,7 @@ class Otp
             $request->cookie('otp_token')
         );
 
-        if (! $token || $token->expired()) {
+        if (! $token /*|| $token->expired()*/) {
             $this->sendNewOtpToUser($user);
 
             return $this->redirectToOtpPage();
