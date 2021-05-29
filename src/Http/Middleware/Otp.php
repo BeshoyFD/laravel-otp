@@ -9,6 +9,7 @@ namespace Erdemkeren\Otp\Http\Middleware;
 
 use Closure;
 use Erdemkeren\Otp\OtpFacade;
+use Erdemkeren\Otp\Token;
 use Erdemkeren\Otp\TokenInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
@@ -79,14 +80,17 @@ class Otp
      */
     private function sendNewOtpToUser(Authenticatable $user): void
     {
-        $token = OtpFacade::create($user, 6);
+        if(Token::hasNotActiveGeneratedPassword($user->id)) {
 
-        if (! method_exists($user, 'notify')) {
-            throw new \UnexpectedValueException(
-                'The otp owner should be an instance of notifiable or implement the notify method.'
-            );
+            $token = OtpFacade::create($user, 5);
+
+            if (!method_exists($user, 'notify')) {
+                throw new \UnexpectedValueException(
+                    'The otp owner should be an instance of notifiable or implement the notify method.'
+                );
+            }
+
+            $user->notify($token->toNotification());
         }
-
-        $user->notify($token->toNotification());
     }
 }
