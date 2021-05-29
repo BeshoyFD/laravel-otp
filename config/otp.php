@@ -49,4 +49,10 @@ return [
      */
 
     'default_channels' => 'mail',
+    
+     /*
+    * custom notification class
+    */
+
+    //'notification' =>  fn($token) => new \App\Notifications\OtpNotification($token),
 ];
